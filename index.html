@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; color: #1c1e21; }
+        #card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 12px 28px rgba(0,0,0,0.1); text-align: center; max-width: 320px; }
+        h1 { font-size: 42px; margin: 0; color: #007bff; }
+        p { font-size: 18px; line-height: 1.4; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div id="card">
+        <h1 id="temp">...</h1>
+        <p id="message">Связываюсь с метеостанцией Петропавловска...</p>
+    </div>
+
+    <script>
+        async function getRealWeather() {
+            const tempEl = document.getElementById('temp');
+            const msgEl = document.getElementById('message');
+            
+            try {
+                // Запрос к Open-Meteo для Петропавловска
+                const res = await fetch("https://api.open-meteo.com");
+                const data = await res.json();
+
+                const now = new Date();
+                let target = new Date();
+                if (now.getHours() >= 9) target.setDate(now.getDate() + 1);
+                const dateStr = target.toLocaleDateString('sv') + "T09:00";
+                
+                const idx = data.hourly.time.indexOf(dateStr);
+                const t = data.hourly.temperature_2m[idx];
+
+                tempEl.innerText = t + "°C";
+
+                if (t < -25) {
+                    msgEl.innerHTML = "Раз сегодня так холодно, то приходи покушать и согреться! ❤️";
+                } else {
+                    msgEl.innerHTML = "Мороза нет, но может всё же увидимся... ✨";
+                }
+            } catch (err) {
+                tempEl.innerText = "Упс";
+                msgEl.innerText = "Метеостанция Петропавловска не отвечает, но ты всё равно заходи! 😉";
+            }
+        }
+        getRealWeather();
+    </script>
+</body>
+</html>
