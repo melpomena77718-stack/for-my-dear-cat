@@ -5,23 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Для тебя</title>
     <style>
-        body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; color: #1c1e21; }
-        #card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 12px 28px rgba(0,0,0,0.1); text-align: center; max-width: 320px; }
-        h1 { font-size: 42px; margin: 0; color: #007bff; }
-        p { font-size: 18px; line-height: 1.4; margin: 20px 0; min-height: 50px; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            /* Картинка на весь экран */
+            background: url('https://i.imgur.com') no-repeat center center fixed; 
+            background-size: cover;
+            font-family: -apple-system, sans-serif;
+        }
+        #card { 
+            background: rgba(255, 255, 255, 0.85); /* Полупрозрачный белый фон */
+            padding: 30px; 
+            border-radius: 24px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+            text-align: center; 
+            max-width: 280px;
+            backdrop-filter: blur(5px); /* Эффект размытия стекла */
+        }
+        h1 { font-size: 48px; margin: 0; color: #007bff; }
+        p { font-size: 19px; line-height: 1.4; margin: 15px 0; color: #1c1e21; font-weight: 500; }
     </style>
 </head>
 <body>
     
 <div id="card">
-    <img src="https://koshka.top" 
-         alt="Милые котики" 
-         style="width: 100%; border-radius: 15px; margin-bottom: 10px;">
-    
-    <div style="font-size: 22px; font-weight: bold; color: #ff6b6b; margin-bottom: 20px; font-style: italic;">
-        Let's warm together...
-    </div>
-
     <h1 id="temp">...</h1>
     <p id="message">Подключаюсь...</p>
 </div>
@@ -37,24 +48,21 @@
             msgEl.innerText = "Проверяю данные с метеостанции Петропавловска...";
             
             setTimeout(async () => {
-                const proxy = "https://api.allorigins.win";
-                const target = encodeURIComponent("https://api.open-meteo.com");
-
+                const url = "https://api.open-meteo.com";
                 try {
-                    const res = await fetch(proxy + target);
-                    const json = await res.json();
-                    const data = JSON.parse(json.contents);
+                    const res = await fetch(url);
+                    const data = await res.json();
                     
                     const now = new Date();
-                    let targetDate = new Date();
-                    if (now.getHours() >= 9) targetDate.setDate(now.getDate() + 1);
-                    const dateStr = targetDate.toLocaleDateString('sv') + "T09:00";
+                    let target = new Date();
+                    if (now.getHours() >= 9) target.setDate(now.getDate() + 1);
+                    const dateStr = target.toLocaleDateString('sv') + "T09:00";
                     
                     const idx = data.hourly.time.indexOf(dateStr);
                     const t = data.hourly.temperature_2m[idx];
 
-                    tempEl.innerText = t + "°C";
-                    msgEl.innerHTML = "Раз сегодня так холодно, то приходи покушать и согреться! ❤️";
+                    tempEl.innerText = Math.round(t) + "°C";
+                    msgEl.innerHTML = "Раз сегодня так холодно, то приходи покушать и согреться! 💗";
                 } catch (err) {
                     tempEl.innerText = "-31°C"; 
                     msgEl.innerHTML = "Раз сегодня так холодно, то приходи покушать и согреться! 💗";
@@ -67,3 +75,4 @@
 
 </body>
 </html>
+
