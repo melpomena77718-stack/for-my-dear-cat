@@ -5,30 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Для тебя</title>
     <style>
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; }
         body { 
-            margin: 0; 
-            padding: 0; 
-            height: 100vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            /* ВОТ ТУТ ИСПРАВИЛ ССЫЛКУ */
-            background: url('https://i.imgur.com') no-repeat center center fixed; 
+            /* ПРЯМАЯ ССЫЛКА БЕЗ ЛИШНИХ СИМВОЛОВ */
+            background-image: url(https://i.imgur.com); 
+            background-position: center;
+            background-repeat: no-repeat;
             background-size: cover;
-            font-family: -apple-system, sans-serif;
+            font-family: sans-serif;
         }
         #card { 
-            background: rgba(255, 255, 255, 0.8); 
+            background: rgba(255, 255, 255, 0.9); 
             padding: 30px; 
-            border-radius: 24px; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+            border-radius: 20px; 
             text-align: center; 
-            max-width: 280px;
-            backdrop-filter: blur(8px); /* Усилил размытие для красоты */
-            -webkit-backdrop-filter: blur(8px);
+            width: 90%;
+            max-width: 300px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        h1 { font-size: 48px; margin: 0; color: #007bff; }
-        p { font-size: 19px; line-height: 1.4; margin: 15px 0; color: #1c1e21; font-weight: 500; }
+        h1 { font-size: 50px; margin: 10px 0; color: #007bff; }
+        p { font-size: 20px; line-height: 1.4; color: #333; }
     </style>
 </head>
 <body>
@@ -42,40 +42,37 @@
     async function getRealWeather() {
         const tempEl = document.getElementById('temp');
         const msgEl = document.getElementById('message');
-        
         msgEl.innerText = "Кажется, сегодня морозно...";
         
         setTimeout(() => {
-            msgEl.innerText = "Проверяю данные с метеостанции Петропавловска...";
+            msgEl.innerText = "Проверяю метеостанцию Петропавловска...";
             
             setTimeout(async () => {
-                // И тут подправил ссылку на API, чтобы она была полной
                 const url = "https://api.open-meteo.com";
                 try {
                     const res = await fetch(url);
                     const data = await res.json();
-                    
                     const now = new Date();
                     let target = new Date();
                     if (now.getHours() >= 9) target.setDate(now.getDate() + 1);
                     const dateStr = target.toLocaleDateString('sv') + "T09:00";
-                    
                     const idx = data.hourly.time.indexOf(dateStr);
-                    const t = data.hourly.temperature_2m[idx];
+                    const t = Math.round(data.hourly.temperature_2m[idx]);
 
-                    tempEl.innerText = Math.round(t) + "°C";
+                    tempEl.innerText = t + "°C";
                     msgEl.innerHTML = "Раз сегодня так холодно, то приходи покушать и согреться! 💗";
                 } catch (err) {
                     tempEl.innerText = "-31°C"; 
                     msgEl.innerHTML = "Раз сегодня так холодно, то приходи покушать и согреться! 💗";
                 }
-            }, 2000); 
-        }, 2000);
+            }, 1500); 
+        }, 1500);
     }
     getRealWeather();
 </script>
 
 </body>
 </html>
+
 
 
